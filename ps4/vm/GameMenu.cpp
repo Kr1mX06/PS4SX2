@@ -100,7 +100,7 @@ namespace PS4GameMenu
 					return nullptr;
 				}, this);
 				active = result == 0;
-				if (!active) error = "Could not start disc detection.";
+				if (!active) error = "Detection du disque impossible.";
 				return active;
 			}
 			bool Collect()
@@ -405,23 +405,23 @@ namespace PS4GameMenu
 		{
 			std::vector<Item> entries;
 			entries.reserve(8);
-			const char* ee[] = {"Normal (preciso)", "Equilibrado (-1)", "Desempenho (-2)"};
-			entries.push_back({std::string("Ciclos EE: ") + ee[EECycleSetting()], {}, {}, false,
-				"Perfil de CPU emulada. Underclock pode prejudicar alguns jogos."});
-			entries.push_back({std::string("EE cycle skip: ") + (SettingsMarker("vm-ee-cycle-skip") ? "Experimental" : "Desligado"),
-				{}, {}, false, "Pula ciclos EE: pode causar falhas e velocidade incorreta."});
-			entries.push_back({std::string("Leitura rapida CDVD: ") + (SettingsMarker("vm-fast-cdvd") ? "Ligada" : "Normal"),
-				{}, {}, false, "Leitura acelerada de disco; normal prioriza compatibilidade."});
-			entries.push_back({std::string("Cache de shaders: ") + (SettingsMarker("vm-no-shader-cache") ? "Desligado" : "Ligado"),
-				{}, {}, false, "Cache reduz compilacoes repetidas de shaders em jogos."});
-			entries.push_back({std::string("Boot rapido PS2: ") + (SettingsMarker("vm-no-fast-boot") ? "Desligado" : "Ligado"),
-				{}, {}, false, "Pula a abertura da BIOS; pode ser desativado para jogos sensiveis."});
-			entries.push_back({std::string("Sincronizacao de audio: ") + (SettingsMarker("vm-audio-async") ? "AsyncMix" : "TimeStretch"),
-				{}, {}, false, "AsyncMix e TimeStretch nao alteram a velocidade real do jogo."});
-			entries.push_back({std::string("Fila de quadros: ") + std::to_string(FrameQueueSetting()),
+			const char* ee[] = {"Normal (precis)", "Equilibre (-1)", "Performance (-2)"};
+			entries.push_back({std::string("Cycles EE : ") + ee[EECycleSetting()], {}, {}, false,
+				"Profil CPU emule. Le sous-cadencage peut gener certains jeux."});
+			entries.push_back({std::string("Saut cycles EE : ") + (SettingsMarker("vm-ee-cycle-skip") ? "Experimental" : "Desactive"),
+				{}, {}, false, "Saute des cycles EE : bugs et vitesse incorrecte possibles."});
+			entries.push_back({std::string("Lecture rapide CDVD : ") + (SettingsMarker("vm-fast-cdvd") ? "Activee" : "Normal"),
+				{}, {}, false, "Lecture disque acceleree ; normal privilegie la compatibilite."});
+			entries.push_back({std::string("Cache shaders : ") + (SettingsMarker("vm-no-shader-cache") ? "Desactive" : "Active"),
+				{}, {}, false, "Le cache reduit les compilations repetees de shaders."});
+			entries.push_back({std::string("Demarrage rapide PS2 : ") + (SettingsMarker("vm-no-fast-boot") ? "Desactive" : "Active"),
+				{}, {}, false, "Saute l'intro BIOS ; a desactiver pour jeux sensibles."});
+			entries.push_back({std::string("Synchro audio : ") + (SettingsMarker("vm-audio-async") ? "AsyncMix" : "TimeStretch"),
+				{}, {}, false, "AsyncMix et TimeStretch ne changent pas la vitesse reelle."});
+			entries.push_back({std::string("File d'images : ") + std::to_string(FrameQueueSetting()),
 				{}, {}, false, "1 menor latencia; 2 padrao; 3 pode aumentar latencia."});
-			entries.push_back({std::string("Pre-carregamento GS: ") + (SettingsMarker("vm-no-gs-preload") ? "Desligado" : "Ligado"),
-				{}, {}, false, "Experimente desativar em jogos com artefatos graficos."});
+			entries.push_back({std::string("Prechargement GS : ") + (SettingsMarker("vm-no-gs-preload") ? "Desactive" : "Active"),
+				{}, {}, false, "A desactiver si artefacts graphiques."});
 			return entries;
 		}
 
@@ -492,11 +492,11 @@ namespace PS4GameMenu
 			}
 			if (items.empty())
 			{
-				const char* message = view == LibraryView::Disc      ? "No disc detected" :
-				                      view == LibraryView::Recent    ? "No recent games" :
-				                      view == LibraryView::Favorites ? "No favorite games" :
-				                      view == LibraryView::Settings  ? "Settings are coming soon" :
-				                                                       "No games found";
+				const char* message = view == LibraryView::Disc      ? "Aucun disque detecte" :
+				                      view == LibraryView::Recent    ? "Aucun jeu recent" :
+				                      view == LibraryView::Favorites ? "Aucun favori" :
+				                      view == LibraryView::Settings  ? "Reglages bientot disponibles" :
+				                                                       "Aucun jeu trouve";
 				items.push_back({message, {}, {}, false});
 			}
 			return items;
@@ -541,7 +541,7 @@ namespace PS4GameMenu
 				s_loading_carousel = true;
 				s_loading_progress = std::min(progress, 100u);
 				s_loading_carousel_phase = carousel_phase;
-				s_loading_status = "Loading...";
+				s_loading_status = "Chargement...";
 				GSPresentCurrentFrame();
 			});
 			MTGS::WaitGS(false);
@@ -797,8 +797,8 @@ namespace PS4GameMenu
 			if (view != LibraryView::Settings || sidebar_focused || selected >= items.size())
 				return;
 			const bool changed = ChangeLauncherSetting(selected, delta);
-			status = changed ? "Configuracao salva: aplicada ao proximo jogo." :
-				"Erro ao salvar. Verifique /data/PS4SX2.";
+			status = changed ? "Reglage enregistre : applique au prochain jeu." :
+				"Erreur sauvegarde. Verifier /data/PS4SX2.";
 			if (changed)
 			{
 				items = BuildView(library, view, favorites, recent);
@@ -824,10 +824,10 @@ namespace PS4GameMenu
 			if (disc_probe.active) return;
 			boot_disc_when_ready = boot;
 			const bool started = disc_probe.Start();
-			items = {{started ? "Checking physical DVD..." : "Disc detection failed", {}, {}, false}};
+			items = {{started ? "Verification du DVD..." : "Detection disque echouee", {}, {}, false}};
 			selected = 0;
 			Publish(items, view);
-			status = started ? "Reading the drive. You can continue browsing." : disc_probe.error;
+			status = started ? "Lecture du lecteur. Navigation possible." : disc_probe.error;
 			disc_status = status;
 		};
 		const auto set_view = [&](LibraryView next) {
@@ -840,7 +840,7 @@ namespace PS4GameMenu
 			if (view == LibraryView::Disc)
 			{
 				if (!disc_probe.active) probe_disc(false);
-				else status = "Checking physical DVD...";
+				else status = "Verification du DVD...";
 			}
 		};
 		// Library refreshes now begin a serialized cover queue. The UI remains
@@ -899,7 +899,7 @@ namespace PS4GameMenu
 				}
 				else
 				{
-					items = {{"Physical DVD unavailable", {}, {}, false}};
+					items = {{"DVD indisponible", {}, {}, false}};
 					status = disc_probe.error;
 				}
 				boot_disc_when_ready = false;
@@ -1058,8 +1058,8 @@ namespace PS4GameMenu
 					else
 						favorites.push_back(selected_path);
 					status = SavePathList(FavoritesFile, favorites) ?
-					             (removing ? "Removed from favorites." : "Added to favorites.") :
-					             "Could not save favorites.";
+					             (removing ? "Retire des favoris." : "Ajoute aux favoris.") :
+					             "Sauvegarde favoris impossible.";
 					items = BuildView(library, view, favorites, recent);
 					const auto same_item = std::find_if(items.begin(), items.end(), [&](const Item& item) { return item.path == selected_path; });
 					selected = same_item == items.end() ? std::min(selected, items.size() - 1) : static_cast<size_t>(same_item - items.begin());
@@ -1090,11 +1090,11 @@ namespace PS4GameMenu
 				path = items[selected].path;
 				struct stat info{};
 				if (path.empty())
-					status = view == LibraryView::Disc     ? "Physical disc support is being prepared." :
-					         view == LibraryView::Settings ? "Settings options will be added here." :
-					                                         "No game is available in this view.";
+					status = view == LibraryView::Disc     ? "Support disque en preparation." :
+					         view == LibraryView::Settings ? "Options de reglage ici." :
+					                                         "Aucun jeu dans cette vue.";
 				else if (stat(path.c_str(), &info) != 0 || !S_ISREG(info.st_mode) || info.st_size <= 0)
-					status = "File unavailable. Press Triangle to refresh the library.";
+					status = "Fichier indisponible. Triangle pour actualiser.";
 				else
 				{
 					// (AI-assisted) Keep an unreadable/unsupported image in the launcher
@@ -1103,7 +1103,7 @@ namespace PS4GameMenu
 					Error image_error;
 					if (!image.Open(path, &image_error))
 					{
-						status = "Cannot open game: " + image_error.GetDescription();
+						status = "Ouverture impossible : " + image_error.GetDescription();
 						ProbeLog("Game menu: launch rejected %s: %s\n", path.c_str(), image_error.GetDescription().c_str());
 						Present(selected, status, connected, false, false, false);
 						Threading::Sleep(16);
@@ -1116,7 +1116,7 @@ namespace PS4GameMenu
 						recent.resize(24);
 					if (!SavePathList(RecentFile, recent))
 						ProbeLog("Game menu: could not save recent list\n");
-					Present(selected, "Starting...", connected, false, false, false);
+					Present(selected, "Demarrage...", connected, false, false, false);
 					// Consume the confirmation before handing the controller to the game.
 					while (scePadReadState(pad, &data) == 0 && data.connected && (data.buttons & ORBIS_PAD_BUTTON_CROSS))
 						Threading::Sleep(16);
@@ -1126,7 +1126,7 @@ namespace PS4GameMenu
 					break;
 				}
 			}
-			Present(selected, connected ? (view == LibraryView::Disc && status.empty() ? disc_status : status) : "Connect a controller to choose a game.", connected,
+			Present(selected, connected ? (view == LibraryView::Disc && status.empty() ? disc_status : status) : "Connecter une manette pour choisir un jeu.", connected,
 				sidebar_focused, false, false);
 			Threading::Sleep(16);
 		}
@@ -1134,13 +1134,13 @@ namespace PS4GameMenu
 		disc_cover.Cancel();
 		while (disc_cover.Active() && !disc_cover.Collect())
 		{
-			Present(selected, "Finishing cover request...", true, sidebar_focused, false, false);
+			Present(selected, "Fin chargement jaquette...", true, sidebar_focused, false, false);
 			Threading::Sleep(16);
 		}
 		// The driver timeout is requested per command; hardware behavior needs proper testing.
 		while (disc_probe.active && !disc_probe.Collect())
 		{
-			Present(selected, "Finishing disc detection...", true, sidebar_focused, false, false);
+			Present(selected, "Fin detection disque...", true, sidebar_focused, false, false);
 			Threading::Sleep(16);
 		}
 		if (start && path == PS4Disc::DevicePath)
@@ -1159,7 +1159,7 @@ namespace PS4GameMenu
 			s_loading_visible = start;
 			s_loading_carousel = false;
 			s_loading_progress = start ? 10u : 0u;
-			s_loading_status = start ? "Preparing emulator..." : "";
+			s_loading_status = start ? "Preparation emulateur..." : "";
 			ClearCoverTextures();
 			if (start)
 				GSPresentCurrentFrame();
@@ -1281,39 +1281,39 @@ namespace PS4GameMenu
 			draw->AddRectFilled(point(64, 38), point(1856, 170), IM_COL32(4, 19, 34, 205), 24.0f * scale);
 			draw->AddLine(point(64, 170), point(1856, 170), IM_COL32(38, 103, 157, 150), 1.0f * scale);
 			image("status_controle", 126, 82, 40, 34);
-			draw->AddText(font, 34.0f * scale, point(196, 82), white, "Emulator menu");
-			draw->AddText(font, 18.0f * scale, point(138, 205), muted, "GAME PAUSED");
+			draw->AddText(font, 34.0f * scale, point(196, 82), white, "Menu emulateur");
+			draw->AddText(font, 18.0f * scale, point(138, 205), muted, "JEU EN PAUSE");
 			char resolution[96];
-			std::snprintf(resolution, sizeof(resolution), "Internal resolution:  < %ux >%s", upscale,
+			std::snprintf(resolution, sizeof(resolution), "Resolution interne :  < %ux >%s", upscale,
 				upscale == 1 ? "  (native)" : "");
 			static constexpr const char* aspect_names[] = {"Stretch", "Auto", "4:3", "16:9", "10:7"};
 			char aspect_label[96];
-			std::snprintf(aspect_label, sizeof(aspect_label), "Aspect ratio:  < %s >", aspect_names[std::min(aspect, 4u)]);
+			std::snprintf(aspect_label, sizeof(aspect_label), "Format image :  < %s >", aspect_names[std::min(aspect, 4u)]);
 			char performance_label[96];
-			std::snprintf(performance_label, sizeof(performance_label), "Performance overlay:  < %s >",
+			std::snprintf(performance_label, sizeof(performance_label), "Affichage perf :  < %s >",
 				show_performance_overlay ? "On" : "Off");
 			char ee_label[96];
-			static constexpr const char* ee_names[] = {"Normal", "Balanced", "Performance"};
-			std::snprintf(ee_label, sizeof(ee_label), "EE cycles: < %s >", ee_names[std::min(ee_profile, 2u)]);
+			static constexpr const char* ee_names[] = {"Normal", "Equilibre", "Performance"};
+			std::snprintf(ee_label, sizeof(ee_label), "Cycles EE : < %s >", ee_names[std::min(ee_profile, 2u)]);
 			char audio_label[96];
-			std::snprintf(audio_label, sizeof(audio_label), "Audio sync: < %s >", async_audio ? "AsyncMix" : "TimeStretch");
+			std::snprintf(audio_label, sizeof(audio_label), "Synchro audio : < %s >", async_audio ? "AsyncMix" : "TimeStretch");
 			char skip_label[96];
-			std::snprintf(skip_label, sizeof(skip_label), "EE cycle skip: < %s >", ee_skip ? "Light" : "Off");
+			std::snprintf(skip_label, sizeof(skip_label), "EE cycle skip: < %s >", ee_skip ? "Leger" : "Off");
 			char queue_label[96];
-			std::snprintf(queue_label, sizeof(queue_label), "Frame queue: < %u >", frame_queue);
-			const char* labels[] = {"Resume game", resolution, aspect_label, performance_label,
-				ee_label, skip_label, queue_label, audio_label, "Return to main menu", "Exit application"};
+			std::snprintf(queue_label, sizeof(queue_label), "File d'images : < %u >", frame_queue);
+			const char* labels[] = {"Reprendre jeu", resolution, aspect_label, performance_label,
+				ee_label, skip_label, queue_label, audio_label, "Retour menu principal", "Quitter application"};
 			const char* descriptions[] = {
-				"Continue emulation from the current frame",
+				"Reprendre emulation depuis image actuelle",
 				"1x prioritizes FPS; 2x balances sharpness; 3x/4x cost more GPU time",
-				"Choose the display shape used by the GS renderer",
-				"Keep FPS and emulation speed visible when comparing settings",
+				"Choisir format affichage du rendu GS",
+				"Garder FPS et vitesse visibles pour comparer",
 				"Normal = accurate; Balanced = mild EE underclock; Performance = stronger underclock (may cause slow motion)",
 				"Off = accurate; Light may improve some CPU-limited games but can stutter (next launch)",
 				"1 = less latency; 2 = default; 3 = deeper buffering (next launch)",
-				"TimeStretch or AsyncMix audio; different timing behavior (next launch)",
-				"Close the VM and reopen the PS4SX2 game library",
-				"Close the VM and exit PS4SX2"};
+				"Audio TimeStretch ou AsyncMix (prochain lancement)",
+				"Fermer jeu et rouvrir bibliotheque PS4SX2",
+				"Fermer jeu et quitter PS4SX2"};
 			const auto draw_option_icon = [&](unsigned row, float cx, float cy, bool selected) {
 				const ImU32 icon_bg = selected ? IM_COL32(34, 127, 214, 255) : IM_COL32(16, 55, 86, 255);
 				const ImU32 icon_line = selected ? IM_COL32(231, 247, 255, 255) : IM_COL32(155, 204, 235, 255);
@@ -1364,17 +1364,17 @@ namespace PS4GameMenu
 				draw->AddText(font, 16.0f * scale, point(226, y + 43), muted, descriptions[row]);
 				if (row >= 1 && row <= 7)
 					draw->AddText(font, 20.0f * scale, point(1580, y + 29), selected ? white : muted,
-						row == 1 ? "ADJUST" : (row == 3 ? "TOGGLE" : "SELECT"));
+						row == 1 ? "REGLER" : (row == 3 ? "BASCULER" : "CHOISIR"));
 			}
 			char hint[128];
-			std::snprintf(hint, sizeof(hint), "Left/Right: change value   |   Resolution range: 1x-%ux", max_upscale);
+			std::snprintf(hint, sizeof(hint), "Gauche/Droite : changer valeur   |   Resolution : 1x-%ux", max_upscale);
 		draw->AddText(font, 17.0f * scale, point(138, 790), muted, hint);
 		draw->AddText(font, 17.0f * scale, point(138, 816), muted, "For demanding games (Prince of Persia / Downhill), test 1x before 2x-4x.");
 		draw->AddText(font, 17.0f * scale, point(138, 842), muted, "Up/Down: select   Left/Right: change   Square: performance preset   Circle: resume");
 			image("controle_x", 1480, 904, 30, 30);
-			draw->AddText(font, 20.0f * scale, point(1524, 909), white, "Confirm");
+			draw->AddText(font, 20.0f * scale, point(1524, 909), white, "Valider");
 			image("controle_bola", 1690, 904, 30, 30);
-			draw->AddText(font, 20.0f * scale, point(1734, 909), muted, "Resume");
+			draw->AddText(font, 20.0f * scale, point(1734, 909), muted, "Reprendre");
 			return true;
 		}
 		if (!s_visible || s_items.empty())
@@ -1464,7 +1464,7 @@ namespace PS4GameMenu
 		text(814, 29, 15, IM_COL32(190, 221, 255, 255), "POD DO");
 		text(807, 68, 43, IM_COL32(239, 248, 255, 255), "HIMURA");
 		draw->AddLine(point(812, 74), point(1085, 74), IM_COL32(23, 173, 255, 245), 3.0f * scale);
-		text(1100, 62, 16, accent, "PS2 LIBRARY");
+		text(1100, 62, 16, accent, "BIBLIOTHEQUE PS2");
 		text(1540, 40, 30, white, "PS4SX2");
 		text(1705, 64, 32, accent, "V12");
 
@@ -1477,13 +1477,13 @@ namespace PS4GameMenu
 			draw->AddRect(point(1480, 22), point(1888, 72), IM_COL32(42, 163, 255, 225), 10 * scale,
 				1.0f * scale, 0);
 			char update_text[96];
-			std::snprintf(update_text, sizeof(update_text), "Update available: %s", PS4Release::LatestVersion());
+			std::snprintf(update_text, sizeof(update_text), "Mise a jour dispo : %s", PS4Release::LatestVersion());
 			text(1502, 54, 17, white, update_text);
 		}
 		// The sidebar changes the data source while retaining the same grid.
 		static constexpr const char* sidebar_icons[] = {
 			"menu_biblioteca", "menu_disc", "menu_recentes", "menu_favoritos", "menu_configuracoes"};
-		static constexpr const char* sidebar_labels[] = {"Library", "Disc", "Recent", "Favorites", "Settings"};
+		static constexpr const char* sidebar_labels[] = {"Bibliotheque", "Disque", "Recents", "Favoris", "Reglages"};
 		const unsigned active_view = static_cast<unsigned>(s_library_view);
 		for (unsigned i = 0; i < 5; ++i)
 		{
@@ -1503,7 +1503,7 @@ namespace PS4GameMenu
 		{
 			fill(294, 128, 1592, 848, IM_COL32(3, 17, 40, 224), 16);
 			draw->AddRect(point(294, 128), point(1886, 976), IM_COL32(35, 126, 224, 190), 16 * scale);
-			text(342, 181, 31, white, "CONFIGURACOES DO EMULADOR");
+			text(342, 181, 31, white, "REGLAGES EMULATEUR");
 			text(342, 213, 17, muted, "Direcional: selecionar e alterar  |  X: proxima opcao  |  L1/R1: trocar aba");
 			for (size_t i = 0; i < s_items.size(); ++i)
 			{
@@ -1676,7 +1676,7 @@ namespace PS4GameMenu
 			dialog_button(670, "Exit PS4SX2", s_exit_confirm);
 			dialog_button(990, "Cancel", !s_exit_confirm);
 			image("controle_x", 780, 694, 28, 28);
-			text(816, 715, 16, white, "Confirm");
+			text(816, 715, 16, white, "Valider");
 			image("controle_bola", 995, 694, 28, 28);
 			text(1031, 715, 16, muted, "Back");
 		}

@@ -208,10 +208,10 @@ namespace ImGuiManager
 			return;
 		char fields[6][64];
 		if (PerformanceMetrics::IsInternalFPSValid())
-			std::snprintf(fields[0], sizeof(fields[0]), "Game ~%.1f FPS", PerformanceMetrics::GetInternalFPS());
+			std::snprintf(fields[0], sizeof(fields[0]), "Jeu ~%.1f FPS", PerformanceMetrics::GetInternalFPS());
 		else
-			std::snprintf(fields[0], sizeof(fields[0]), "Internal FPS N/A");
-		std::snprintf(fields[1], sizeof(fields[1]), "Speed %.0f%%", PerformanceMetrics::GetSpeed());
+			std::snprintf(fields[0], sizeof(fields[0]), "FPS interne N/D");
+		std::snprintf(fields[1], sizeof(fields[1]), "Vitesse %.0f%%", PerformanceMetrics::GetSpeed());
 		std::snprintf(fields[2], sizeof(fields[2]), "PS2 %.1f Hz", PerformanceMetrics::GetFPS());
 		const double ee_ms = PerformanceMetrics::GetCPUThreadAverageTime();
 		const float gs_ms = PerformanceMetrics::GetGSThreadAverageTime();
