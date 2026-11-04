@@ -2,7 +2,7 @@
 # ThinLTO objects need a current lld, but the console refuses images laid out by
 # it (CE-41839-5). Fold them into one native object, then link with OpenOrbis lld.
 set -euo pipefail
-real="$(dirname "$0")/ld.lld.real"
+real="$(dirname "$0")/real/ld.lld"
 args=()
 objs=()
 slot=-1
