@@ -1445,7 +1445,7 @@ namespace PS4GameMenu
 		fill(286, 0, 1634, 92, IM_COL32(6, 7, 14, 170), 0);
 		draw->AddLine(point(286, 92), point(1920, 92), IM_COL32(38, 103, 157, 110), 1.0f * scale);
 		image("menu_logo", 32, 0, 220, 73);
-		centered_text(142, 82, 11, muted, "PS4SX2 V12  /  PLAYSTATION 2");
+		centered_text(142, 82, 11, muted, "PS4SX2 KRM  /  PLAYSTATION 2");
 		// Centered channel signature: the crown and luminous strokes are vector UI,
 		// so no per-frame image decoding or GPU texture uploads are needed.
 		// Lightweight animation: alpha pulses only, no new textures or allocations.
@@ -1461,8 +1461,8 @@ namespace PS4GameMenu
 		for (int i = 0; i < 6; ++i)
 			draw->AddLine(crown_points[i], crown_points[i + 1], crown_gold, 3.0f * scale);
 		draw->AddLine(point(728, 53), point(783, 53), crown_gold, 4.0f * scale);
-		text(814, 29, 15, IM_COL32(190, 221, 255, 255), "POD DO");
-		text(807, 68, 43, IM_COL32(239, 248, 255, 255), "HIMURA");
+		text(814, 29, 15, IM_COL32(190, 221, 255, 255), "KRM");
+		text(807, 68, 43, IM_COL32(239, 248, 255, 255), "RIM-K06");
 		draw->AddLine(point(812, 74), point(1085, 74), IM_COL32(23, 173, 255, 245), 3.0f * scale);
 		text(1100, 62, 16, accent, "BIBLIOTHEQUE PS2");
 		text(1540, 40, 30, white, "PS4SX2");
