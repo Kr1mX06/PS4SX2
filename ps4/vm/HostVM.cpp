@@ -259,6 +259,7 @@ void Host::LoadSettings(SettingsInterface& si, std::unique_lock<std::mutex>&)
 	// No persistent settings storage on PS4; use defaults.
 }
 
+extern u64 g_ps4_tsc_iop_exec, g_ps4_tsc_spu2;
 void Host::OnPerformanceMetricsUpdated()
 {
 	// (AI-assisted) This callback runs on the GS thread, which owns these metrics.
@@ -270,7 +271,6 @@ void Host::OnPerformanceMetricsUpdated()
 		return;
 	const double profile_interval = last_log ? Common::Timer::ConvertValueToSeconds(now - last_log) : 0.0;
 	{
-		extern u64 g_ps4_tsc_iop_exec, g_ps4_tsc_spu2;
 		static u64 last_tsc = 0, last_exec = 0, last_spu2 = 0;
 		const u64 tsc = __builtin_ia32_rdtsc(), exec = g_ps4_tsc_iop_exec, spu2 = g_ps4_tsc_spu2;
 		if (last_tsc)
