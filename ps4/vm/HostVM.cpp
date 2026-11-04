@@ -269,6 +269,15 @@ void Host::OnPerformanceMetricsUpdated()
 	if (last_log != 0 && Common::Timer::ConvertValueToSeconds(now - last_log) < 5.0)
 		return;
 	const double profile_interval = last_log ? Common::Timer::ConvertValueToSeconds(now - last_log) : 0.0;
+	{
+		extern u64 g_ps4_tsc_iop_exec, g_ps4_tsc_spu2;
+		static u64 last_tsc = 0, last_exec = 0, last_spu2 = 0;
+		const u64 tsc = __builtin_ia32_rdtsc(), exec = g_ps4_tsc_iop_exec, spu2 = g_ps4_tsc_spu2;
+		if (last_tsc)
+			ProbeLog("IOP split: exec_pct=%.1f spu2_pct=%.1f
+", 100.0 * (exec - last_exec) / (tsc - last_tsc), 100.0 * (spu2 - last_spu2) / (tsc - last_tsc));
+		last_tsc = tsc; last_exec = exec; last_spu2 = spu2;
+	}
 	last_log = now;
 	const auto fps_method = PerformanceMetrics::GetInternalFPSMethod();
 	const char* method = fps_method == PerformanceMetrics::InternalFPSMethod::GSPrivilegedRegister ? "GS-reg" :

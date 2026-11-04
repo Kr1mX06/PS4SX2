@@ -44,6 +44,8 @@
 using namespace R5900;	// for R5900 disasm tools
 
 int g_ps4_ee_rapid_delta = 48; // EE cycles between event tests while ahead of the IOP
+u64 g_ps4_tsc_iop_exec = 0;
+u64 g_ps4_tsc_spu2 = 0;
 s32 EEsCycle;		// used to sync the IOP to the EE
 u64 EEoCycle;
 
@@ -467,7 +469,9 @@ __fi void _cpuEventTest_Shared()
 		//if( EEsCycle < -450 )
 		//	Console.WriteLn( " IOP ahead by: %d cycles", -EEsCycle );
 
+		const u64 iop_start = __builtin_ia32_rdtsc();
 		EEsCycle = psxCpu->ExecuteBlock(EEsCycle);
+		g_ps4_tsc_iop_exec += __builtin_ia32_rdtsc() - iop_start;
 
 		iopEventAction = false;
 	}

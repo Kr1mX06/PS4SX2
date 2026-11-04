@@ -381,9 +381,12 @@ void SPU2::CheckForConfigChanges(const Pcsx2Config& old_config)
 #endif
 }
 
+extern u64 g_ps4_tsc_spu2;
 void SPU2async()
 {
+	const u64 spu2_start = __builtin_ia32_rdtsc();
 	TimeUpdate(psxRegs.cycle);
+	g_ps4_tsc_spu2 += __builtin_ia32_rdtsc() - spu2_start;
 }
 
 u16 SPU2read(u32 rmem)
