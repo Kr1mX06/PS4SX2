@@ -68,6 +68,7 @@ extern std::atomic<u32> g_orbis_rec_compiles, g_orbis_rec_discards, g_orbis_rec_
 extern bool g_ps4_vtlb_register_cache;
 extern bool g_ps4_vtlb_bulk_register_cache;
 extern bool g_ps4_skip_smc_checks;
+extern bool g_ps4_spu2_fast;
 extern bool g_ps4_bytecopy_fusion;
 extern std::atomic<int> g_orbis_waitloop_ext;
 extern u64 g_ps4_vtlb_cached_quad_reads, g_ps4_vtlb_cached_writes;
@@ -938,6 +939,9 @@ static void* RunVM(void*)
 	ProbeLog("EE JIT manual SMC validation: %s (%s)\n",
 		g_ps4_skip_smc_checks ? "relaxed (skip per-block checks, manual protection only)" : "enabled for all games (exact block checks)",
 		g_ps4_skip_smc_checks ? "enabled by /data/PS4SX2/vm-skip-smc" : "exact (reverted Fase 3-B)");
+	g_ps4_spu2_fast = access("/data/PS4SX2/vm-spu2-fast", F_OK) == 0;
+	ProbeLog("SPU2 fast mix: %s (nearest interpolation, no reverb; enable with /data/PS4SX2/vm-spu2-fast)\n",
+		g_ps4_spu2_fast ? "enabled" : "disabled");
 	// (AI-assisted) Exact SMC mode must inspect code on every loop iteration.
 	g_ps4_bytecopy_fusion = g_ps4_skip_smc_checks && access("/data/PS4SX2/vm-no-bytecopy-fusion", F_OK) != 0;
 	g_ps4_bytecopy_blocks = g_ps4_bytecopy_runs = g_ps4_bytecopy_bytes = 0;

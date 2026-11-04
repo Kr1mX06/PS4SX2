@@ -24,6 +24,8 @@
 // invalided when DMA transfers and memory writes are performed.
 PcmCacheEntry pcm_cache_data[pcm_BlockCount];
 
+bool g_ps4_spu2_fast = false;
+
 int g_counter_cache_hits = 0;
 int g_counter_cache_misses = 0;
 int g_counter_cache_ignores = 0;
@@ -288,6 +290,9 @@ static __forceinline s32 GetVoiceValues(V_Core& thiscore, uint voiceidx)
 {
 	V_Voice& vc(thiscore.Voices[voiceidx]);
 
+	if (g_ps4_spu2_fast)
+		return vc.DecodeFifo[(vc.DecPosRead + 2) % 32];
+
 	int phase = (vc.SP & 0x0ff0) >> 4;
 	s32 out = 0;
 	out += (interpTable[phase][0] * vc.DecodeFifo[(vc.DecPosRead + 0) % 32]) >> 15;
@@ -508,7 +513,7 @@ static __forceinline StereoOut32 MixCore(const uint coreidx, const VoiceMixSet& 
 	WaveDump::WriteCore(thiscore.Index, CoreSrc_PreReverb, TW);
 #endif
 
-	StereoOut32 RV = thiscore.DoReverb(TW);
+	StereoOut32 RV = g_ps4_spu2_fast ? StereoOut32::Empty : thiscore.DoReverb(TW);
 
 #ifdef PCSX2_DEVBUILD
 	WaveDump::WriteCore(thiscore.Index, CoreSrc_PostReverb, RV);
