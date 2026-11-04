@@ -187,7 +187,9 @@ void psxRcntInit()
 	psxCounters[4].interrupt = 0x08000;
 	psxCounters[5].interrupt = 0x10000;
 
-	psxCounters[6].rate = 768;
+	// vm-spu2-fast: wake the IOP every 8 samples instead of every sample.
+	extern bool g_ps4_spu2_fast;
+	psxCounters[6].rate = g_ps4_spu2_fast ? 768 * 8 : 768;
 	psxCounters[6].deltaCycles = psxCounters[6].rate;
 	psxCounters[6].mode.modeval = 0x8;
 
