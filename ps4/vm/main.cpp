@@ -69,6 +69,7 @@ extern bool g_ps4_vtlb_register_cache;
 extern bool g_ps4_vtlb_bulk_register_cache;
 extern bool g_ps4_skip_smc_checks;
 extern bool g_ps4_spu2_fast;
+extern int g_ps4_ee_rapid_delta;
 extern bool g_ps4_bytecopy_fusion;
 extern std::atomic<int> g_orbis_waitloop_ext;
 extern u64 g_ps4_vtlb_cached_quad_reads, g_ps4_vtlb_cached_writes;
@@ -942,6 +943,10 @@ static void* RunVM(void*)
 	g_ps4_spu2_fast = access("/data/PS4SX2/vm-spu2-fast", F_OK) == 0;
 	ProbeLog("SPU2 fast mix: %s (nearest interpolation, no reverb; enable with /data/PS4SX2/vm-spu2-fast)\n",
 		g_ps4_spu2_fast ? "enabled" : "disabled");
+	g_ps4_ee_rapid_delta = access("/data/PS4SX2/vm-ee-sync-1024", F_OK) == 0 ? 1024 :
+		access("/data/PS4SX2/vm-ee-sync-512", F_OK) == 0 ? 512 :
+		access("/data/PS4SX2/vm-ee-sync-256", F_OK) == 0 ? 256 : 48;
+	ProbeLog("EE rapid event delta: %d cycles (markers vm-ee-sync-256/512/1024)\n", g_ps4_ee_rapid_delta);
 	// (AI-assisted) Exact SMC mode must inspect code on every loop iteration.
 	g_ps4_bytecopy_fusion = g_ps4_skip_smc_checks && access("/data/PS4SX2/vm-no-bytecopy-fusion", F_OK) != 0;
 	g_ps4_bytecopy_blocks = g_ps4_bytecopy_runs = g_ps4_bytecopy_bytes = 0;

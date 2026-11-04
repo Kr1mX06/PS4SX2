@@ -43,6 +43,7 @@
 
 using namespace R5900;	// for R5900 disasm tools
 
+int g_ps4_ee_rapid_delta = 48; // EE cycles between event tests while ahead of the IOP
 s32 EEsCycle;		// used to sync the IOP to the EE
 u64 EEoCycle;
 
@@ -537,7 +538,7 @@ __fi void _cpuEventTest_Shared()
 		// IOP extra timeslices in short order.
 
 		ORBIS_EEDIAG(OrbisEEDiag::iop_rapid++); // vk-285-100
-		cpuSetNextEventDelta(48);
+		cpuSetNextEventDelta(g_ps4_ee_rapid_delta);
 		//Console.Warning( "EE ahead of the IOP -- Rapid Event!  %d", EEsCycle );
 	}
 	else
