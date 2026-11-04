@@ -322,6 +322,11 @@ target_compile_definitions(vm_boot PRIVATE PCSX2_PS4=1 PCSX2_PS4_VM_BOOT=1 PS4=1
   OVERRIDE_HOST_PAGE_SIZE=0x4000 OVERRIDE_HOST_CACHE_LINE_SIZE=64)
 target_compile_options(vm_boot PRIVATE -march=btver2 -msse4.1 -mno-avx2 -mno-bmi2 -ffunction-sections -fdata-sections -fvisibility=hidden
   "$<$<COMPILE_LANGUAGE:CXX>:SHELL:-include compare>" "SHELL:-include strings.h")
+option(PCSX2_VM_THINLTO "Build vm_boot with ThinLTO" ON)
+if(PCSX2_VM_THINLTO)
+  target_compile_options(vm_boot PRIVATE -flto=thin -fomit-frame-pointer)
+  target_link_options(vm_boot PRIVATE --thinlto-jobs=2 --lto-O3)
+endif()
 target_link_options(vm_boot PRIVATE --gc-sections --error-limit=0)
 ps4_link_mesa(vm_boot)
 target_link_libraries(vm_boot PRIVATE glslang glslang-default-resource-limits ryml ps4_audio_resampler ps4_chd
