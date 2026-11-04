@@ -325,7 +325,6 @@ target_compile_options(vm_boot PRIVATE -march=btver2 -msse4.1 -mno-avx2 -mno-bmi
 option(PCSX2_VM_THINLTO "Build vm_boot with ThinLTO" ON)
 if(PCSX2_VM_THINLTO)
   target_compile_options(vm_boot PRIVATE -flto=thin -fomit-frame-pointer)
-  target_link_options(vm_boot PRIVATE --thinlto-jobs=2 --lto-O3 -znorelro)
 endif()
 target_link_options(vm_boot PRIVATE --gc-sections --error-limit=0)
 ps4_link_mesa(vm_boot)
