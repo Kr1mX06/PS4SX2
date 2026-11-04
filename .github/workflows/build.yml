@@ -61,6 +61,10 @@ jobs:
           export VM_BUILD_DIR="$RUNNER_TEMP/ps4sx2-build"
           export PCSX2_VM_JIT=ON PCSX2_VM_FASTMEM=ON PCSX2_VM_MTVU=ON
           chmod +x "$OPENORBIS"/bin/*
+          mkdir -p "$OPENORBIS/bin/real"
+          cp -L "$OPENORBIS/bin/ld.lld" "$OPENORBIS/bin/real/ld.lld"
+          rm -f "$OPENORBIS/bin/ld.lld"
+          install -m 755 tools/ci/ld-thinlto.sh "$OPENORBIS/bin/ld.lld"
           bash ps4/vm/build-wsl.sh 2 2>&1 | tee ci-output/compile.log
           cp ps4/vm/build/{eboot.bin,vm_boot,vm_boot.oelf} ci-output/
           printf 'Commit: %s\nSDK SHA256: %s\n' "$GITHUB_SHA" "$PS4_SDK_SHA256" > ci-output/build-info.txt

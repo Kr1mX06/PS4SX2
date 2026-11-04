@@ -2745,7 +2745,7 @@ static void recRecompile(const u32 startpc)
 		const unsigned n = rec_probe++;
 		if (!lowest_rsp || rsp_now < lowest_rsp)
 			lowest_rsp = rsp_now;
-		if (n < 8 || (n % 100) == 0)
+		if (n < 8)
 		{
 			printf("[dbg] rec: recompile[%u] pc=%08x rsp=%p lowest=%p\n", n, startpc, rsp_now, lowest_rsp);
 			fflush(stdout);

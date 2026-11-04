@@ -28,22 +28,25 @@ namespace PS4SMCCheck
 
 		xMOV64(rax, reinterpret_cast<uptr>(source));
 		u32 offset = 0;
+		
 		while (offset < vector_bytes)
 		{
-			xMOVDQU(xmm0, ptr128[rax + offset]);
-			xPCMP.EQD(xmm0, ptr128[snapshot + offset]);
-			offset += 16;
-			if (offset < vector_bytes)
-			{
-				xMOVDQU(xmm1, ptr128[rax + offset]);
-				xPCMP.EQD(xmm1, ptr128[snapshot + offset]);
-				xPAND(xmm0, xmm1);
-				offset += 16;
-			}
-			xPMOVMSKB(ecx, xmm0);
-			xCMP(ecx, 0xffff);
-			xJNE(mismatch);
+		    xMOVDQU(xmm0, ptr128[rax + offset]);
+		    xPXOR(xmm0, ptr128[snapshot + offset]);
+		    offset += 16;
+		
+		    if (offset < vector_bytes)
+		    {
+		        xMOVDQU(xmm1, ptr128[rax + offset]);
+		        xPXOR(xmm1, ptr128[snapshot + offset]);
+		        xPOR(xmm0, xmm1);
+		        offset += 16;
+		    }
+		
+		    xPTEST(xmm0, xmm0);
+		    xJNE(mismatch);
 		}
+
 		// Exact 4-byte tail: no vector load may extend past the original block.
 		for (; offset < bytes; offset += 4)
 		{
